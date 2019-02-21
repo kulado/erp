@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"strconv"
 
-	"erp/models"
-	permission2 "erp/plugins/permission"
-	"erp/plugins/position"
+	"github.com/kulado/erp/models"
+	permission2 "github.com/kulado/erp/plugins/permission"
+	"github.com/kulado/erp/plugins/position"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"

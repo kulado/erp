@@ -1,8 +1,8 @@
 package permission
 
 import (
-	"erp/models"
-	"erp/modules/redis"
+	"github.com/kulado/erp/models"
+	"github.com/kulado/erp/modules/redis"
 
 	"github.com/astaxie/beego/orm"
 )

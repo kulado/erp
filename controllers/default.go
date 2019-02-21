@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"erp/models"
+	"github.com/kulado/erp/models"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"erp/models"
-	"erp/plugins/permission"
-	"erp/plugins/position"
+	"github.com/kulado/erp/models"
+	"github.com/kulado/erp/plugins/permission"
+	"github.com/kulado/erp/plugins/position"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"

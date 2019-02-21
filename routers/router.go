@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"erp/controllers"
+	"github.com/kulado/erp/controllers"
 
 	"github.com/astaxie/beego"
 )

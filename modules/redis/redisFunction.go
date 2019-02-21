@@ -3,7 +3,7 @@ package redis_orm
 import (
 	"strconv"
 
-	"erp/models"
+	"github.com/kulado/erp/models"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
