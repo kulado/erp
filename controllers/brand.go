@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"github.com/kulado/erp/models"
-	"github.com/kulado/erp/plugins/permission"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
+	"github.com/kulado/erp/models"
+	"github.com/kulado/erp/plugins/permission"
 	"html/template"
 )
 
@@ -13,7 +13,7 @@ type BrandController struct {
 	beego.Controller
 }
 
-//商标列表页面
+// Trademark list page
 func (c *BrandController) Get() {
 	brand := []models.Brand{}
 	o := orm.NewOrm()
@@ -24,7 +24,7 @@ func (c *BrandController) Get() {
 	c.TplName = "brand/brand_list.html"
 }
 
-//添加商标页面
+// Add a trademark page, Adding trademarks page
 func (c *BrandController) Brand_add() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "AddBrand") {
 		c.Abort("401")
@@ -34,7 +34,7 @@ func (c *BrandController) Brand_add() {
 	c.TplName = "brand/brand_add.html"
 }
 
-//添加商标 post提交
+// Add trademark post submission, Adding to submit trademark post
 func (c *BrandController) Brand_add_post() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "AddBrand") {
 		c.Abort("401")
@@ -45,20 +45,20 @@ func (c *BrandController) Brand_add_post() {
 	o := orm.NewOrm()
 	exit := o.QueryTable("brand").Filter("name", brand.Name).Exist()
 	if exit {
-		c.Data["msg"] = "此品牌名称已经存在，请勿重复添加~"
+		c.Data["msg"] = "This brand name already exists. Please do not add it repeatedly~, This brand name already exists, do not repeat add ~"
 		c.Data["url"] = "/brand_add"
 		c.TplName = "jump/error.html"
 		return
 	} else {
 		_, err := o.Insert(&brand)
 		if err != nil {
-			logs.Error(c.GetSession("uid"), "添加品牌错误：", err)
-			c.Data["msg"] = "添加失败，请稍后重试或联系管理员~"
+			logs.Error(c.GetSession("uid"), "Add brand error: ", err)
+			c.Data["msg"] = "Add failed, please try again later or contact administrator~, Add failed, please try again later or contact your administrator ~"
 			c.Data["url"] = "/brand_add"
 			c.TplName = "jump/error.html"
 			return
 		} else {
-			c.Data["msg"] = "添加品牌 " + brand.Name + " 成功~"
+			c.Data["msg"] = "Add brand " + brand.Name + " success~"
 			c.Data["url"] = "/brand_list"
 			c.TplName = "jump/success.html"
 			return

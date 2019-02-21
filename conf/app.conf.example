@@ -11,7 +11,7 @@ sessionon = true
 sessionprovider = memory
 sessionname = GOCartSession
 
-defaultpassword = tr7VUZ9w
+defaultpassword = shengwuquan
 # Product warehouse added by default, Default Product Added Treasury
 defaultstore = Slibrary
 
@@ -31,8 +31,8 @@ permission_prefix = permission_
 userdata_prefix = userdata_
 
 [mysql]
-username = azureuser@kulado
-password = tr7VUZ9w?!@&
-host = mysql.kulado.com
+username = root
+password =
+host = 127.0.0.1
 port = 3306
 database = erp

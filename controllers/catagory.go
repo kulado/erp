@@ -17,20 +17,20 @@ type CategoryController struct {
 	beego.Controller
 }
 
-//分类列表数据前台展示
+// Category list data front display, Categories list data show reception
 func (c *CategoryController) Get() {
 	o := orm.NewOrm()
 	category := []models.Category{}
 	o.QueryTable("category").Filter("is_hidden", false).OrderBy("primary", "two_stage").All(&category)
 
 	if len(category) == 0 {
-		c.Data["msg"] = "分类表数据为空，请联系管理员添加分类信息～"
+		c.Data["msg"] = "The classification table data is empty, please contact the administrator to add classification information~, Classification data is empty, contact your administrator to add classifieds -"
 		c.Data["url"] = "/"
 		c.TplName = "jump/error.html"
 		return
 	}
 
-	//i, j分别为一级分类和二级分类数量
+	// i, j are the number of primary and secondary classifications respectively, i, j are a number of categories and sub-categories
 	var i, j int64 = 0, 0
 	for _, item := range category {
 		if item.TwoStage == "-" {
@@ -41,7 +41,7 @@ func (c *CategoryController) Get() {
 		}
 	}
 
-	//primary, two_stage分别为一级分类和二级分类的以数据库Id为索引，以分类名称为值的map
+	//primary, two_stage is a map of the primary and secondary classifications with the database Id as the index and the classification name as the value., two_stage Id respectively in the database as an index value to the category names map classification and a classification of the two
 	primary := make(map[int]string, i)
 	two_stage := make(map[int]string, j)
 	for _, item := range category {
@@ -60,7 +60,7 @@ func (c *CategoryController) Get() {
 	c.TplName = "category/category_list.html"
 }
 
-//提交分类表excel界面展示
+// Submit classification table excel interface display, Submit classification excel interface display
 func (c *CategoryController) Category_upload() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
@@ -70,29 +70,29 @@ func (c *CategoryController) Category_upload() {
 	c.TplName = "category/category_upload.html"
 }
 
-//分类表excel文件上传，以及更新数据库分类表
+// Classification table excel file upload, and update database classification table, Classification excel file uploads, and update the database classification
 func (c *CategoryController) Category_upload_post() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
 	}
 	f, h, err := c.GetFile("category_file")
 	if err != nil {
-		logs.Error("用户ID：", c.GetSession("uid"), "上传category_file失败，原因:", err)
-		c.Data["msg"] = "上传文件出错，请检查后重试～"
+		logs.Error("User ID：", c.GetSession("uid"), "Uploading category_file failed, reason:, Upload category_file failed because:", err)
+		c.Data["msg"] = "Upload file error, please check and try again~, Upload file error. Please check retry ~"
 		c.Data["url"] = "/category_upload"
 		c.TplName = "jump/error.html"
 	}
 	defer f.Close()
 	if h.Header.Get("Content-Type") == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" {
-		//文件上传
+		// File Upload, Upload file
 		filename := strconv.Itoa(c.GetSession("uid").(int)) + "_" + h.Filename
 		c.SaveToFile("category_file", "static/upload/"+filename)
 
-		//xlsx文件解析
+		// Xlsx file parsing
 		xlFile, err := excelize.OpenFile("./static/upload/" + filename)
 		if err != nil {
-			logs.Error("360EntSecGroup-Skylar/excelize：读取xlsx文件失败->", err)
-			c.Data["msg"] = "读取.xlsx文件失败，请检查后重试～"
+			logs.Error("360EntSecGroup-Skylar/excelize: reading xlsx file failed->", err)
+			c.Data["msg"] = "Failed to read .xlsx file, please try and try again~, Read .xlsx file failed, please try again check ~"
 			c.Data["url"] = "/category_upload"
 			c.TplName = "jump/error.html"
 			return
@@ -110,10 +110,10 @@ func (c *CategoryController) Category_upload_post() {
 				j++
 			}
 
-			//将Id转化为int类型
+			// Convert Id to int type, The converted to type int Id
 			id, _ := strconv.Atoi(temp[0])
 
-			//讲is_hidden转化为bool类型值
+			// Said is_hidden converted to bool type value, Speak is_hidden converted to bool type value
 			var is_hidden bool = false
 			if temp[4] == "1" {
 				is_hidden = true
@@ -125,27 +125,27 @@ func (c *CategoryController) Category_upload_post() {
 		}
 		catagory = catagory[1:]
 
-		//数据库操作
+		// Database operation, Database operations
 		o := orm.NewOrm()
 		o.Raw("truncate table category").Exec()
 		nums, err := o.InsertMulti(100, catagory)
 		if err != nil {
 			logs.Error(err)
 		} else {
-			c.Data["msg"] = "数据库分类表共插入" + strconv.Itoa(int(nums)) + "条数据～"
+			c.Data["msg"] = "Database classification table co-insertion, Were inserted into the database classification" + strconv.Itoa(int(nums)) + "Article data~, Of data ~"
 			c.Data["url"] = "/category_list"
 			c.TplName = "jump/success.html"
 			return
 		}
 
 	} else {
-		c.Data["msg"] = "请上传.xlsx为扩展名的excel文件～"
+		c.Data["msg"] = "Please upload the excel file with extension .xlsx~, Please upload .xlsx extension of the excel file ~"
 		c.Data["url"] = "/category_upload"
 		c.TplName = "jump/error.html"
 	}
 }
 
-//添加分类
+// add category
 func (c *CategoryController) Category_add() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
@@ -153,7 +153,7 @@ func (c *CategoryController) Category_add() {
 	category := []models.Category{}
 	o := orm.NewOrm()
 
-	//将数据一次性查询出来
+	// Query data once, Check out the one-time data
 	o.QueryTable("category").Filter("three_stage", "-").All(&category)
 
 	var primary_string string
@@ -173,7 +173,7 @@ func (c *CategoryController) Category_add() {
 	c.TplName = "category/category_add.html"
 }
 
-//添加分类提交
+// Add category submission, Add categories to submit
 func (c *CategoryController) Category_add_post() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
@@ -191,7 +191,7 @@ func (c *CategoryController) Category_add_post() {
 	primary_query := models.Category{}
 	o.QueryTable("category").Filter("primary", primary).
 		One(&primary_query, "id", "is_hidden")
-	//如果查询不到将会返回对应类型的零值
+	// If the query is not found, it will return the zero value of the corresponding type., If the query returns less than zero value corresponding to the type of
 	if primary_query.Id != 0 {
 		category.Primary = strconv.Itoa(primary_query.Id)
 	}
@@ -199,12 +199,12 @@ func (c *CategoryController) Category_add_post() {
 	two_stage_query := models.Category{}
 	o.QueryTable("category").Filter("two_stage", two_stage).
 		One(&two_stage_query, "id", "is_hidden")
-	//如果查询不到将会返回对应类型的零值
+	// If the query is not found, it will return the zero value of the corresponding type., If the query returns less than zero value corresponding to the type of
 	if two_stage_query.Id != 0 {
 		category.TwoStage = strconv.Itoa(two_stage_query.Id)
 	}
 
-	//判断是否隐藏
+	// Determine whether to hide, To determine whether hidden
 	if primary_query.Is_hidden || two_stage_query.Is_hidden {
 		category.Is_hidden = true
 	} else {
@@ -214,24 +214,24 @@ func (c *CategoryController) Category_add_post() {
 	_, err := o.Insert(&category)
 	if err != nil {
 		c.Data["url"] = "/category_add"
-		c.Data["msg"] = "添加分类失败~"
+		c.Data["msg"] = "Add category failed, Add categories failure~"
 		c.TplName = "jump/error.html"
 		return
 	} else {
 		c.Data["url"] = "/category_list"
-		c.Data["msg"] = "添加分类成功~"
+		c.Data["msg"] = "Add classification successfully, Add categories success~"
 		c.TplName = "jump/success.html"
 	}
 }
 
-//分类编辑
+// Category editing, Category editor
 func (c *CategoryController) Category_edit() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
 	}
 	category := []models.Category{}
 	o := orm.NewOrm()
-	//这里只对常用的三级分类添加检索便利
+	// Here only the search convenience is added to the commonly used three-level classification., Here only add convenience to retrieve the common three-tier classification
 	o.QueryTable("category").Exclude("three_stage", "-").All(&category, "three_stage")
 
 	var three_stage_string string
@@ -245,7 +245,7 @@ func (c *CategoryController) Category_edit() {
 	c.TplName = "category/category_edit.html"
 }
 
-//ajax请求1条分类信息
+// Ajax requests 1 category information, ajax request a classification information
 func (c *CategoryController) Category_search() {
 	if !c.IsAjax() {
 		return
@@ -291,7 +291,7 @@ func (c *CategoryController) Category_search() {
 	c.ServeJSON()
 }
 
-//分类编辑post
+// Category editing post, Categories edit post
 func (c *CategoryController) Category_edit_post() {
 	if !permission.GetOneItemPermission(c.GetSession("username").(string), "OperateCategory") {
 		c.Abort("401")
@@ -305,7 +305,7 @@ func (c *CategoryController) Category_edit_post() {
 
 	if category.Primary == "-" {
 		c.Data["url"] = "/category_edit"
-		c.Data["msg"] = "注意：无此分类信息，请重新检索~"
+		c.Data["msg"] = "Note: If there is no such classification information, please search again~, Note: no such classification information, please refer to retrieve ~"
 		c.TplName = "jump/error.html"
 		return
 	}
@@ -340,11 +340,11 @@ func (c *CategoryController) Category_edit_post() {
 	_, err := o.Update(&category)
 	if err != nil {
 		c.Data["url"] = "/category_edit"
-		c.Data["msg"] = "更改分类信息失败~"
+		c.Data["msg"] = "Failed to change classification information, Failed to change category~"
 		c.TplName = "jump/error.html"
 		return
 	}
 	c.Data["url"] = "/category_list"
-	c.Data["msg"] = "更改分类信息成功~"
+	c.Data["msg"] = "Change classification information successfully, Change classifieds success~"
 	c.TplName = "jump/success.html"
 }

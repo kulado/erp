@@ -6,3 +6,4 @@ erp_database.sql
 data.json
 dump.rdb
 appendonly.aof
+conf/app.conf
